@@ -97,7 +97,7 @@ function check_kernel_headers() {
     exit 1;
   fi
 
-  apt-get -y --reinstall install raspberrypi-kernel
+  apt-get -y --reinstall install rbp2-kernel-osmc
 }
 
 # update and install required packages
@@ -105,18 +105,10 @@ which apt &>/dev/null
 if [[ $? -eq 0 ]]; then
   apt update -y
   # Raspbian kernel packages
-  apt-get -y install raspberrypi-kernel-headers raspberrypi-kernel 
-  # Ubuntu kernel packages
-  apt-get -y install linux-raspi linux-headers-raspi linux-image-raspi
+  apt-get -y install rbp2-headers-$(uname -r) rbp2-kernel-osmc
   apt-get -y install dkms git i2c-tools libasound2-plugins
   # rpi-update checker
   check_kernel_headers
-fi
-
-# Arch Linux
-which pacman &>/dev/null
-if [[ $? -eq 0 ]]; then
-  pacman -Syu --needed git gcc automake make dkms linux-raspberrypi-headers i2c-tools
 fi
 
 # locate currently installed kernels (may be different to running kernel if
@@ -187,6 +179,9 @@ grep -q "^dtoverlay=i2s-mmap$" $CONFIG || \
 grep -q "^dtparam=i2s=on$" $CONFIG || \
   echo "dtparam=i2s=on" >> $CONFIG
 
+grep -q "^dtoverlay=seeed-2mic-voicecard$" $CONFIG || \
+  echo "dtoverlay=seeed-2mic-voicecard" >> $CONFIG
+  
 #install config files
 mkdir /etc/voicecard || true
 cp *.conf /etc/voicecard
